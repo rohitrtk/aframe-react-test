@@ -1,47 +1,34 @@
+import React from 'react'
 import 'aframe'
 import 'aframe-environment-component'
 import { Entity, Scene } from 'aframe-react'
 
-import { useState } from 'react'
-
+import Assets from 'aframe-react-assets'
+import rootAssets from './scripts/rootAssets'
+import MediaCircle from './scripts/MediaCircle'
 import './scripts/ColourClicker'
-import './scripts/MediaCircle'
 
-import icon_audio from './assets/icons/audios_icon.svg'
-import icon_image from './assets/icons/images_icon.svg'
-import icon_video from './assets/icons/videos_icon.svg'
-import icon_story from './assets/icons/stories_icon.svg'
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
 
-const App = () => {
-  const Assets = [
-    <img id='icon_audio' src={icon_audio} alt=''></img>,
-    <img id='icon_image' src={icon_image} alt=''></img>,
-    <img id='icon_video' src={icon_video} alt=''></img>,
-    <img id='icon_story' src={icon_story} alt=''></img>
-  ];  
-  
-  const [position, setPosition] = useState({
-    x: 1,
-    y: 1,
-    z: 1
-  });
+    this.state = {
+      planePosition: {x: 1, y: 1, z: 1},
+      planeMaterial: {transparent: true, shader: 'flat'}
+    }
+  }
 
-  return (
-    <div>
+  render() {
+    return (
       <Scene stats>
-        <a-assets timeout='3000'>
-          <img id='icon_audio' src='icons/audios_icon.svg' alt='' crossOrigin='true'></img>
-        </a-assets>
-
-        <Entity environment='preset: contact;'/>
-
-        <Entity primitive='a-camera' look-controls='enabled: true;' active='true' cursor='rayOrigin: mouse;' raycaster='objects: .clickable'></Entity>
-        <Entity primitive='a-plane' position={{...position}} colour-clicker></Entity>
-
-        <Entity primitive='a-media-circle' position='-1 1 -1'></Entity>
+          <Assets assets={rootAssets} timeout={4e4} interval={200} debug={true} onLoad={this.updateAssetsLoadingStatus} onLoadingBySize={this.updateAssetsCurrentInfo} onLoadingByAmount={this.updateAssetsLoadingInfo}/>
+          <Entity environment='preset: contact;'/>
+  
+          <Entity primitive='a-camera' look-controls='enabled: true;' active='true' cursor='rayOrigin: mouse;' raycaster='objects: .clickable'></Entity>
+          <Entity primitive='a-plane' position={this.state.planePosition} src='#icon_audio' material={this.state.planeMaterial}></Entity>
+  
+          <MediaCircle btnsrc='#icon_video' position='2 2 2' name='test'/>
       </Scene>
-    </div>
-  );
+    );
+  }
 }
-
-export default App;
